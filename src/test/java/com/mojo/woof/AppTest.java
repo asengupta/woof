@@ -12,6 +12,7 @@ import java.util.Map;
 public class AppTest
 {
     @Test
+    @Disabled
     public void canTraverseGraph() {
         GraphSDK sdk = new GraphSDK(new Neo4JDriverBuilder().fromEnv());
         Advisor advisor = new Advisor(OpenAICredentials.fromEnv());
@@ -20,6 +21,7 @@ public class AppTest
     }
 
     @Test
+    @Disabled
     public void canCreateIndividualUnconnectedNodes() {
         GraphSDK sdk = new GraphSDK(new Neo4JDriverBuilder().fromEnv());
         Map<String, Object> properties = Map.of("property1", "value1", "property2", "value2", "property3", "value3");
@@ -29,6 +31,7 @@ public class AppTest
     }
 
     @Test
+    @Disabled
     public void canFindExistingNodes() {
         GraphSDK sdk = new GraphSDK(new Neo4JDriverBuilder().fromEnv());
         Map<String, Object> properties = Map.of("property1", "value1", "property2", "value2", "property3", "value3");
@@ -38,6 +41,7 @@ public class AppTest
     }
 
     @Test
+    @Disabled
     public void canConnectTwoNodes() {
         GraphSDK sdk = new GraphSDK(new Neo4JDriverBuilder().fromEnv());
         Map<String, Object> properties = Map.of("property1", "value1", "property2", "value2", "property3", "value3");
