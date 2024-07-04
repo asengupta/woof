@@ -5,6 +5,7 @@ import org.neo4j.driver.*;
 import org.neo4j.driver.Record;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import static com.mojo.woof.NodeAccess.id;
@@ -81,6 +82,7 @@ public class GraphSDK {
 
     public Record connect(Record parent, Record child, String relationshipName) {
         try (Session session = driver.session()) {
+            System.out.println("Connecting");
             Record record = session.executeWrite(tx -> {
                 Query query = new Query("MATCH (p {id: $parentId}) MATCH (c {id: $childId}) " +
                         String.format("CREATE (p)-[r:%s]->(c) ", relationshipName) +
@@ -90,5 +92,23 @@ public class GraphSDK {
             });
             return record;
         }
+    }
+
+    public List<Record> nodeByProperties(Map<String, Object> propertySpec) {
+        try (Session session = driver.session()) {
+            List<Record> records = session.executeWrite(tx -> {
+                List<String> searchSpecs = propertySpec.entrySet().stream().map(e -> e.getKey() + ": $" + e.getKey()).toList();
+                String searchSpec = String.join(",", searchSpecs);
+                String queryString = String.format("MATCH (n {%s}) ", searchSpec) + " RETURN n";
+                return tx.run(queryString, propertySpec).list();
+            });
+            return records;
+        }
+    }
+
+    public Record newOrExisting(Map<String, Object> propertySpec, WoofNode newNode) {
+        List<Record> nodes = nodeByProperties(propertySpec);
+        Record record = nodes.isEmpty() ? createNode(newNode) : nodes.getFirst();
+        return record;
     }
 }

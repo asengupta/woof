@@ -9,7 +9,7 @@ import org.neo4j.driver.Record;
 import java.util.List;
 import java.util.Map;
 
-public class AppTest
+public class SDKTest
 {
     @Test
     @Disabled
@@ -49,5 +49,15 @@ public class AppTest
         Record parent = sdk.createNode(new WoofNode(properties, labels));
         Record child = sdk.createNode(new WoofNode(Map.of("x1", "y1"), ImmutableList.of("AAAA", "BBBB", "CCCC")));
         Record relationship = sdk.connect(parent, child, "IS_COOLER_THAN");
+    }
+
+    @Test
+    @Disabled
+    public void canFindNodeBasedOnArbitraryProperty() {
+        GraphSDK sdk = new GraphSDK(new Neo4JDriverBuilder().fromEnv());
+        Map<String, Object> properties = Map.of("testProp", "testVal", "property2", "value2", "property3", "value3");
+        List<String> labels = ImmutableList.of("LABEL1", "LABEL2", "LABEL3", "LABEL4", "LABEL5", "LABEL6", "LABEL7");
+        Record node = sdk.createNode(new WoofNode(properties, labels));
+        List<Record> foundNodes = sdk.nodeByProperties(Map.of("testProp", "testVal"));
     }
 }
