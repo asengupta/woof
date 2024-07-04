@@ -47,15 +47,48 @@ public class GraphSDK {
         }
     }
 
-    public void createSummary(String textContent, Record node) {
+    public Record createSummary(String textContent, Record node) {
         try (Session session = driver.session()) {
-            session.executeWrite(tx -> {
+            Record record = session.executeWrite(tx -> {
                 Query query = new Query("MATCH (p:CODE_CHUNK {id: $parentId}) " +
-                        "CREATE (c:SUMMARY_NODE {id: $childId, type: 'SUMMARY', text: $text}) " +
-                        "CREATE (p)-[:SUMMARISED_BY]->(c)",
-                        Values.parameters("text", textContent, "parentId", id(node), "childId", UUID.randomUUID().toString()));
-                return tx.run(query).list();
+                        "CREATE (n:SUMMARY_NODE {id: $childId, type: 'SUMMARY', text: $text}) " +
+                        "CREATE (p)-[:SUMMARISED_BY]->(n) " +
+                        "RETURN n",
+                        parameters("text", textContent, "parentId", id(node), "childId", UUID.randomUUID().toString()));
+                return tx.run(query).single();
             });
+            return record;
+        }
+    }
+
+    public Record createNode(WoofNode node) {
+        try (Session session = driver.session()) {
+            Record record = session.executeWrite(tx -> {
+                return node.run(tx).single();
+            });
+            return record;
+        }
+    }
+
+    public Record node(Object id) {
+        try (Session session = driver.session()) {
+            Record record = session.executeWrite(tx -> {
+                return tx.run(new Query("MATCH (n {id: $id}) RETURN n", Values.parameters("id", id))).single();
+            });
+            return record;
+        }
+    }
+
+    public Record connect(Record parent, Record child, String relationshipName) {
+        try (Session session = driver.session()) {
+            Record record = session.executeWrite(tx -> {
+                Query query = new Query("MATCH (p {id: $parentId}) MATCH (c {id: $childId}) " +
+                        String.format("CREATE (p)-[r:%s]->(c) ", relationshipName) +
+                        "RETURN p, c, r",
+                        parameters("parentId", id(parent), "childId", id(child)));
+                return tx.run(query).single();
+            });
+            return record;
         }
     }
 }

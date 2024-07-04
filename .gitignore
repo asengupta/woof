@@ -71,6 +71,7 @@ local.properties
 #################
 .idea/
 *.iml
+.run
 
 
 # vscode stuff
