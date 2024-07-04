@@ -1,0 +1,3 @@
+fileignoreconfig:
+- filename: src/main/java/com/mojo/woof/Neo4JDriverBuilder.java
+  checksum: 1a1c7ccbf0e80e1d9d59fc854d0fb01400f8ddb3f120a9a5474e160e02b23493
