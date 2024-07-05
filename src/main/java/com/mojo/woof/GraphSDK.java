@@ -30,17 +30,17 @@ public class GraphSDK {
         }
     }
 
-    public ActionResult traverse(Record node, NodeAction nodeAction) {
-        List<Record> children = directChildren(node);
+    public ActionResult traverse(Record node, NodeAction nodeAction, String parentChildRelationship) {
+        List<Record> children = directChildren(node, parentChildRelationship);
         if (children.isEmpty()) return nodeAction.apply(node, ImmutableList.of());
-        List<ActionResult> childResults = children.stream().map(n -> traverse(n, nodeAction)).toList();
+        List<ActionResult> childResults = children.stream().map(n -> traverse(n, nodeAction, parentChildRelationship)).toList();
         return nodeAction.apply(node, childResults);
     }
 
-    private List<Record> directChildren(Record node) {
+    private List<Record> directChildren(Record node, String parentChildRelationship) {
         try (Session session = driver.session()) {
             return session.executeRead(tx -> {
-                Query query = new Query("MATCH (start {id: $rootID})-[:MADE_OF]->(n)" +
+                Query query = new Query(String.format("MATCH (start {id: $rootID})-[:%s]->(n)", parentChildRelationship) +
                         "            RETURN DISTINCT n", parameters("rootID", id(node)));
                 Result result = tx.run(query);
                 return result.list();
@@ -51,7 +51,7 @@ public class GraphSDK {
     public Record createSummary(String textContent, Record node) {
         try (Session session = driver.session()) {
             Record record = session.executeWrite(tx -> {
-                Query query = new Query("MATCH (p:CODE_CHUNK {id: $parentId}) " +
+                Query query = new Query("MATCH (p {id: $parentId}) " +
                         "CREATE (n:SUMMARY_NODE {id: $childId, type: 'SUMMARY', text: $text}) " +
                         "CREATE (p)-[:SUMMARISED_BY]->(n) " +
                         "RETURN n",

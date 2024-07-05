@@ -16,7 +16,9 @@ public class SDKTest
     public void canTraverseGraph() {
         GraphSDK sdk = new GraphSDK(new Neo4JDriverBuilder().fromEnv());
         Advisor advisor = new Advisor(OpenAICredentials.fromEnv());
-        ActionResult result = sdk.traverse(sdk.rootNode(), new SummariseAction(advisor, sdk));
+        Record root = sdk.nodeByProperties(Map.of("type", "PROCEDURE_DIVISION_BODY")).getFirst();
+        ActionResult result = sdk.traverse(root, new SummariseAction(advisor, sdk), "CONTAINS");
+//        ActionResult result = sdk.traverse(root, NodeAction.JUST_PRINT, "CONTAINS");
         assertTrue( true );
     }
 
