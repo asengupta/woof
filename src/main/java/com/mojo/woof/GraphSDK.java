@@ -94,20 +94,26 @@ public class GraphSDK {
         }
     }
 
-    public List<Record> nodeByProperties(Map<String, Object> propertySpec) {
+    public List<Record> nodeByProperties(List<String> labels, Map<String, Object> propertySpec) {
         try (Session session = driver.session()) {
             List<Record> records = session.executeWrite(tx -> {
+                String nodeIdentifier = labelSearchSpecs(labels);
                 List<String> searchSpecs = propertySpec.entrySet().stream().map(e -> e.getKey() + ": $" + e.getKey()).toList();
-                String searchSpec = String.join(",", searchSpecs);
-                String queryString = String.format("MATCH (n {%s}) ", searchSpec) + " RETURN n";
+                String propertySearchSpec = String.join(",", searchSpecs);
+                String queryString = String.format("MATCH (%s {%s}) ", nodeIdentifier, propertySearchSpec) + " RETURN n";
                 return tx.run(queryString, propertySpec).list();
             });
             return records;
         }
     }
 
-    public Record newOrExisting(Map<String, Object> propertySpec, WoofNode newNode) {
-        List<Record> nodes = nodeByProperties(propertySpec);
+    private String labelSearchSpecs(List<String> labels) {
+        if (labels.isEmpty()) return "n";
+        return "n:" + String.join(":", labels);
+    }
+
+    public Record newOrExisting(List<String> labels, Map<String, Object> propertySpec, WoofNode newNode) {
+        List<Record> nodes = nodeByProperties(labels, propertySpec);
         Record record = nodes.isEmpty() ? createNode(newNode) : nodes.getFirst();
         return record;
     }
