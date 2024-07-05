@@ -11,14 +11,6 @@ public class WoofNode {
     private final Map<String, Object> properties;
     private final List<String> labels;
 
-    public Map<String, Object> getProperties() {
-        return properties;
-    }
-
-    public List<String> getLabels() {
-        return labels;
-    }
-
     public WoofNode(Map<String, Object> properties, List<String> labels) {
         this.properties = properties;
         this.labels = labels;
