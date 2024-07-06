@@ -19,7 +19,7 @@ public class SummariseAction implements NodeAction {
     public ActionResult apply(Record node, List<ActionResult> childResults) {
         List<String> childStrings = childResults.stream().map(ActionResult::toString).toList();
         String s = NodeAccess.type(node) + " composed of [" + String.join(",", childStrings) + "]";
-        List<String> advice = advisor.advise("Summarise the following: " + source(node));
+        List<String> advice = advisor.advise("Summarise the following: " + source(node) + ", given the following child summaries: " + s);
         String summary = advice.stream().reduce("", (a, b) -> a + b);
         sdk.createSummary(summary, node);
         return new SummaryActionResult(summary);

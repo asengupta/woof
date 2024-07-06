@@ -16,7 +16,7 @@ public class SDKTest
     public void canTraverseGraph() {
         GraphSDK sdk = new GraphSDK(new Neo4JDriverBuilder().fromEnv());
         Advisor advisor = new Advisor(OpenAICredentials.fromEnv());
-        Record root = sdk.nodeByProperties(ImmutableList.of("AST_NODE"), Map.of("type", "PROCEDURE_DIVISION_BODY")).getFirst();
+        Record root = sdk.findNode(ImmutableList.of("AST_NODE"), Map.of("type", "PROCEDURE_DIVISION_BODY")).getFirst();
         ActionResult result = sdk.traverse(root, new SummariseAction(advisor, sdk), "CONTAINS");
 //        ActionResult result = sdk.traverse(root, NodeAction.JUST_PRINT, "CONTAINS");
     }
@@ -59,6 +59,6 @@ public class SDKTest
         Map<String, Object> properties = Map.of("testProp", "testVal", "property2", "value2", "property3", "value3");
         List<String> labels = ImmutableList.of("LABEL1", "LABEL2", "LABEL3", "LABEL4", "LABEL5", "LABEL6", "LABEL7");
         Record node = sdk.createNode(new WoofNode(properties, labels));
-        List<Record> foundNodes = sdk.nodeByProperties(ImmutableList.of("LABEL7"), Map.of("testProp", "testVal"));
+        List<Record> foundNodes = sdk.findNode(ImmutableList.of("LABEL7"), Map.of("testProp", "testVal"));
     }
 }

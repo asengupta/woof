@@ -14,4 +14,8 @@ public class NodeAccess {
     public static String source(Record node) {
         return node.get("n").get("text").toString();
     }
+
+    public static String name(Record node) {
+        return node.get("n").get("name").toString();
+    }
 }

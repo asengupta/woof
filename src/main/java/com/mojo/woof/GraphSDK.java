@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import static com.mojo.woof.NodeAccess.id;
+import static com.mojo.woof.NodeLabels.SUMMARY_NODE;
 import static org.neo4j.driver.Values.parameters;
 
 public class GraphSDK {
@@ -52,7 +53,7 @@ public class GraphSDK {
         try (Session session = driver.session()) {
             Record record = session.executeWrite(tx -> {
                 Query query = new Query("MATCH (p {id: $parentId}) " +
-                        "CREATE (n:SUMMARY_NODE {id: $childId, type: 'SUMMARY', text: $text}) " +
+                        String.format("CREATE (n:%s {id: $childId, type: 'SUMMARY', text: $text}) ", SUMMARY_NODE) +
                         "CREATE (p)-[:SUMMARISED_BY]->(n) " +
                         "RETURN n",
                         parameters("text", textContent, "parentId", id(node), "childId", UUID.randomUUID().toString()));
@@ -94,7 +95,7 @@ public class GraphSDK {
         }
     }
 
-    public List<Record> nodeByProperties(List<String> labels, Map<String, Object> propertySpec) {
+    public List<Record> findNode(List<String> labels, Map<String, Object> propertySpec) {
         try (Session session = driver.session()) {
             List<Record> records = session.executeWrite(tx -> {
                 String nodeIdentifier = labelSearchSpecs(labels);
@@ -113,7 +114,7 @@ public class GraphSDK {
     }
 
     public Record newOrExisting(List<String> labels, Map<String, Object> propertySpec, WoofNode newNode) {
-        List<Record> nodes = nodeByProperties(labels, propertySpec);
+        List<Record> nodes = findNode(labels, propertySpec);
         Record record = nodes.isEmpty() ? createNode(newNode) : nodes.getFirst();
         return record;
     }
