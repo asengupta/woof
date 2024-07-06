@@ -86,7 +86,7 @@ public class GraphSDK {
             System.out.println("Connecting");
             Record record = session.executeWrite(tx -> {
                 Query query = new Query("MATCH (p {id: $parentId}) MATCH (c {id: $childId}) " +
-                        String.format("CREATE (p)-[r:%s]->(c) ", relationshipName) +
+                        String.format("MERGE (p)-[r:%s]->(c) ", relationshipName) +
                         "RETURN p, c, r",
                         parameters("parentId", id(parent), "childId", id(child)));
                 return tx.run(query).single();
@@ -117,5 +117,9 @@ public class GraphSDK {
         List<Record> nodes = findNode(labels, propertySpec);
         Record record = nodes.isEmpty() ? createNode(newNode) : nodes.getFirst();
         return record;
+    }
+
+    public void connect(WoofNode from, WoofNode to, String relationshipName) {
+        connect(createNode(from), createNode(to), relationshipName);
     }
 }
