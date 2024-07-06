@@ -19,7 +19,6 @@ public class SDKTest
         Record root = sdk.nodeByProperties(ImmutableList.of("AST_NODE"), Map.of("type", "PROCEDURE_DIVISION_BODY")).getFirst();
         ActionResult result = sdk.traverse(root, new SummariseAction(advisor, sdk), "CONTAINS");
 //        ActionResult result = sdk.traverse(root, NodeAction.JUST_PRINT, "CONTAINS");
-        assertTrue( true );
     }
 
     @Test
