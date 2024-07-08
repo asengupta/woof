@@ -87,7 +87,8 @@ public class GraphSDK {
         try (Session session = driver.session()) {
             System.out.println("Connecting");
             Record record = session.executeWrite(tx -> {
-                Query query = new Query("MATCH (p {id: $parentId}) MATCH (c {id: $childId}) " +
+                Query query = new Query("MATCH (p {id: $parentId}) " +
+                        " MATCH (c {id: $childId}) " +
                         String.format("MERGE (p)-[r:%s]->(c) ", relationshipName) +
                         "RETURN p, c, r",
                         parameters("parentId", id(parent), "childId", id(child)));
