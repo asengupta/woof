@@ -16,6 +16,11 @@ public class WoofNode {
         this.labels = labels;
     }
 
+    public WoofNode(NodeSpec spec) {
+        this.properties = spec.properties();
+        this.labels = spec.labels();
+    }
+
     public Result run(TransactionContext tx) {
         String labelSpec = "n:" + String.join(":", labels);
         String idSpec = "id: \"" + UUID.randomUUID() + "\"";

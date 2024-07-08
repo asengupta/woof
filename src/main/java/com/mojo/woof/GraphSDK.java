@@ -6,10 +6,12 @@ import org.neo4j.driver.Record;
 
 import java.util.List;
 import java.util.Map;
+import java.util.SequencedCollection;
 import java.util.UUID;
 
 import static com.mojo.woof.NodeAccess.id;
 import static com.mojo.woof.NodeLabels.SUMMARY_NODE;
+import static com.mojo.woof.NodeProperties.TEXT;
 import static org.neo4j.driver.Values.parameters;
 
 public class GraphSDK {
@@ -56,7 +58,7 @@ public class GraphSDK {
                         String.format("CREATE (n:%s {id: $childId, type: 'SUMMARY', text: $text}) ", SUMMARY_NODE) +
                         "CREATE (p)-[:SUMMARISED_BY]->(n) " +
                         "RETURN n",
-                        parameters("text", textContent, "parentId", id(node), "childId", UUID.randomUUID().toString()));
+                        parameters(TEXT, textContent, "parentId", id(node), "childId", UUID.randomUUID().toString()));
                 return tx.run(query).single();
             });
             return record;
@@ -94,8 +96,7 @@ public class GraphSDK {
             return record;
         }
     }
-
-    public List<Record> findNode(List<String> labels, Map<String, Object> propertySpec) {
+    List<Record> findNode(List<String> labels, Map<String, Object> propertySpec) {
         try (Session session = driver.session()) {
             List<Record> records = session.executeWrite(tx -> {
                 String nodeIdentifier = labelSearchSpecs(labels);
@@ -121,5 +122,13 @@ public class GraphSDK {
 
     public void connect(WoofNode from, WoofNode to, String relationshipName) {
         connect(createNode(from), createNode(to), relationshipName);
+    }
+
+    public List<Record> findNode(NodeSpec spec) {
+        return findNode(spec.labels(), spec.properties());
+    }
+
+    public Record newOrExisting(NodeSpec spec, WoofNode node) {
+        return newOrExisting(spec.labels(), spec.properties(), node);
     }
 }
