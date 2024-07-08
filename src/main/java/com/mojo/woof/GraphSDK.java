@@ -12,6 +12,7 @@ import java.util.UUID;
 import static com.mojo.woof.NodeAccess.id;
 import static com.mojo.woof.NodeLabels.SUMMARY_NODE;
 import static com.mojo.woof.NodeProperties.TEXT;
+import static com.mojo.woof.NodeRelations.*;
 import static org.neo4j.driver.Values.parameters;
 
 public class GraphSDK {
@@ -56,7 +57,7 @@ public class GraphSDK {
             Record record = session.executeWrite(tx -> {
                 Query query = new Query("MATCH (p {id: $parentId}) " +
                         String.format("CREATE (n:%s {id: $childId, type: 'SUMMARY', text: $text}) ", SUMMARY_NODE) +
-                        "CREATE (p)-[:SUMMARISED_BY]->(n) " +
+                        String.format("CREATE (p)-[:%s]->(n) ", SUMMARISED_BY) +
                         "RETURN n",
                         parameters(TEXT, textContent, "parentId", id(node), "childId", UUID.randomUUID().toString()));
                 return tx.run(query).single();
@@ -131,5 +132,25 @@ public class GraphSDK {
 
     public Record newOrExisting(NodeSpec spec, WoofNode node) {
         return newOrExisting(spec.labels(), spec.properties(), node);
+    }
+
+    public void contains(Record parent, Record child) {
+        connect(parent, child, CONTAINS);
+    }
+
+    public void jumpsTo(Record source, Record destination) {
+        connect(source, destination, JUMPS_TO);
+    }
+
+    public void isFollowedBy(Record current, Record next) {
+        connect(current, next, FOLLOWED_BY);
+    }
+
+    public void startsWith(Record start, Record end) {
+        connect(start, end, STARTS_WITH);
+    }
+
+    public void modifies(Record modifier, Record modified) {
+        connect(modifier, modified, MODIFIES);
     }
 }
