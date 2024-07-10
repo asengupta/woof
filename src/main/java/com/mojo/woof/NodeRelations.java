@@ -7,4 +7,5 @@ public class NodeRelations {
     public static String STARTS_WITH = "STARTS_WITH";
     public static String SUMMARISED_BY = "SUMMARISED_BY";
     public static String MODIFIES = "MODIFIES";
+    public static String REDEFINES = "REDEFINES";
 }

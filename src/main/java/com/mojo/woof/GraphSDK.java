@@ -6,7 +6,6 @@ import org.neo4j.driver.Record;
 
 import java.util.List;
 import java.util.Map;
-import java.util.SequencedCollection;
 import java.util.UUID;
 
 import static com.mojo.woof.NodeAccess.id;
@@ -98,7 +97,7 @@ public class GraphSDK {
             return record;
         }
     }
-    List<Record> findNode(List<String> labels, Map<String, Object> propertySpec) {
+    List<Record> findNodes(List<String> labels, Map<String, Object> propertySpec) {
         try (Session session = driver.session()) {
             List<Record> records = session.executeWrite(tx -> {
                 String nodeIdentifier = labelSearchSpecs(labels);
@@ -117,7 +116,7 @@ public class GraphSDK {
     }
 
     public Record newOrExisting(List<String> labels, Map<String, Object> propertySpec, WoofNode newNode) {
-        List<Record> nodes = findNode(labels, propertySpec);
+        List<Record> nodes = findNodes(labels, propertySpec);
         Record record = nodes.isEmpty() ? createNode(newNode) : nodes.getFirst();
         return record;
     }
@@ -126,8 +125,8 @@ public class GraphSDK {
         connect(createNode(from), createNode(to), relationshipName);
     }
 
-    public List<Record> findNode(NodeSpec spec) {
-        return findNode(spec.labels(), spec.properties());
+    public List<Record> findNodes(NodeSpec spec) {
+        return findNodes(spec.labels(), spec.properties());
     }
 
     public Record newOrExisting(NodeSpec spec, WoofNode node) {
