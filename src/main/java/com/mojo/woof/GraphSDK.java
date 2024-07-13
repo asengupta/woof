@@ -97,6 +97,7 @@ public class GraphSDK {
             return record;
         }
     }
+
     List<Record> findNodes(List<String> labels, Map<String, Object> propertySpec) {
         try (Session session = driver.session()) {
             List<Record> records = session.executeWrite(tx -> {
@@ -151,5 +152,13 @@ public class GraphSDK {
 
     public void modifies(Record modifier, Record modified) {
         connect(modifier, modified, MODIFIES);
+    }
+
+    public void accesses(Record accessor, Record accessed) {
+        connect(accessor, accessed, ACCESSES);
+    }
+
+    public void flowsInto(Record accessor, Record accessed) {
+        connect(accessor, accessed, FLOWS_INTO);
     }
 }
