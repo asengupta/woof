@@ -8,4 +8,5 @@ public class NodeRelations {
     public static String SUMMARISED_BY = "SUMMARISED_BY";
     public static String MODIFIES = "MODIFIES";
     public static String REDEFINES = "REDEFINES";
+    public static String RELATIONSHIP_TYPE = "relationshipType";
 }
