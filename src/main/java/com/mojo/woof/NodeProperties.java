@@ -7,6 +7,7 @@ public class NodeProperties {
     public static String TYPE = "type";
     public static String ENTITY_TYPE = "entity_type";
     public static String NAME = "name";
+    public static String LABEL = "label";
     public static String LEVEL = "level";
     public static String NAMESPACE = "namespace";
 }
