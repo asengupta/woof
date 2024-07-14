@@ -49,7 +49,7 @@ public class SDKTest
         List<String> labels = ImmutableList.of("LABEL1", "LABEL2", "LABEL3", "LABEL4", "LABEL5", "LABEL6", "LABEL7");
         Record parent = sdk.createNode(new WoofNode(properties, labels));
         Record child = sdk.createNode(new WoofNode(Map.of("x1", "y1"), ImmutableList.of("AAAA", "BBBB", "CCCC")));
-        Record relationship = sdk.connect(parent, child, "IS_COOLER_THAN");
+        Record relationship = sdk.connect(parent, child, "IS_COOLER_THAN", Map.of());
     }
 
     @Test

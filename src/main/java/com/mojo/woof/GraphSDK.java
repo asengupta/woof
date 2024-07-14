@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import static com.mojo.woof.EdgeType.EDGE_TYPE;
 import static com.mojo.woof.NodeAccess.id;
 import static com.mojo.woof.NodeLabels.SUMMARY_NODE;
 import static com.mojo.woof.NodeProperties.TEXT;
@@ -83,15 +84,15 @@ public class GraphSDK {
         }
     }
 
-    public Record connect(Record parent, Record child, String relationshipName) {
+    public Record connect(Record parent, Record child, String relationshipName, String edgeType) {
         try (Session session = driver.session()) {
             System.out.println("Connecting");
             Record record = session.executeWrite(tx -> {
                 Query query = new Query("MATCH (p {id: $parentId}) " +
                         " MATCH (c {id: $childId}) " +
-                        String.format("MERGE (p)-[r:%s]->(c) ", relationshipName) +
+                        String.format("MERGE (p)-[r:%s {edgeType: $edgeType}]->(c) ", relationshipName) +
                         "RETURN p, c, r",
-                        parameters("parentId", id(parent), "childId", id(child)));
+                        parameters("parentId", id(parent), "childId", id(child), EDGE_TYPE, edgeType));
                 return tx.run(query).single();
             });
             return record;
@@ -122,8 +123,8 @@ public class GraphSDK {
         return record;
     }
 
-    public void connect(WoofNode from, WoofNode to, String relationshipName) {
-        connect(createNode(from), createNode(to), relationshipName);
+    public void redefines(Record from, Record to) {
+        connect(from, to, REDEFINES, EdgeType.DATA);
     }
 
     public List<Record> findNodes(NodeSpec spec) {
@@ -134,31 +135,35 @@ public class GraphSDK {
         return newOrExisting(spec.labels(), spec.properties(), node);
     }
 
-    public void contains(Record parent, Record child) {
-        connect(parent, child, CONTAINS);
+    public void containsCodeNode(Record parent, Record child) {
+        connect(parent, child, CONTAINS, EdgeType.SYNTAX);
+    }
+
+    public void containsDataNode(Record parent, Record child) {
+        connect(parent, child, CONTAINS, EdgeType.DATA);
     }
 
     public void jumpsTo(Record source, Record destination) {
-        connect(source, destination, JUMPS_TO);
+        connect(source, destination, JUMPS_TO, EdgeType.FLOW);
     }
 
     public void isFollowedBy(Record current, Record next) {
-        connect(current, next, FOLLOWED_BY);
+        connect(current, next, FOLLOWED_BY, EdgeType.FLOW);
     }
 
     public void startsWith(Record start, Record end) {
-        connect(start, end, STARTS_WITH);
+        connect(start, end, STARTS_WITH, EdgeType.FLOW);
     }
 
     public void modifies(Record modifier, Record modified) {
-        connect(modifier, modified, MODIFIES);
+        connect(modifier, modified, MODIFIES, EdgeType.TOUCH);
     }
 
     public void accesses(Record accessor, Record accessed) {
-        connect(accessor, accessed, ACCESSES);
+        connect(accessor, accessed, ACCESSES, EdgeType.TOUCH);
     }
 
     public void flowsInto(Record accessor, Record accessed) {
-        connect(accessor, accessed, FLOWS_INTO);
+        connect(accessor, accessed, FLOWS_INTO, EdgeType.DATA);
     }
 }
