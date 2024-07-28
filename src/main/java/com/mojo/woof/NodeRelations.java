@@ -1,14 +1,14 @@
 package com.mojo.woof;
 
 public class NodeRelations {
-    public static String JUMPS_TO = "JUMPS_TO";
-    public static String CONTAINS = "CONTAINS";
-    public static String FOLLOWED_BY = "FOLLOWED_BY";
-    public static String STARTS_WITH = "STARTS_WITH";
-    public static String SUMMARISED_BY = "SUMMARISED_BY";
-    public static String MODIFIES = "MODIFIES";
-    public static String ACCESSES = "ACCESSES";
-    public static String FLOWS_INTO = "FLOWS_INTO";
-    public static String REDEFINES = "REDEFINES";
-    public static String RELATIONSHIP_TYPE = "relationshipType";
+    public static final String JUMPS_TO = "JUMPS_TO";
+    public static final String CONTAINS = "CONTAINS";
+    public static final String FOLLOWED_BY = "FOLLOWED_BY";
+    public static final String STARTS_WITH = "STARTS_WITH";
+    public static final String SUMMARISED_BY = "SUMMARISED_BY";
+    public static final String MODIFIES = "MODIFIES";
+    public static final String ACCESSES = "ACCESSES";
+    public static final String FLOWS_INTO = "FLOWS_INTO";
+    public static final String REDEFINES = "REDEFINES";
+    public static final String RELATIONSHIP_TYPE = "relationshipType";
 }
