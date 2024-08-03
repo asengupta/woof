@@ -166,4 +166,12 @@ public class GraphSDK {
     public void flowsInto(Record accessor, Record accessed) {
         connect(accessor, accessed, FLOWS_INTO, EdgeType.DATA);
     }
+
+    public void hasComment(Record sourceRecord, Record comment) {
+        connect(sourceRecord, comment, HAS_COMMENT, EdgeType.ANNOTATION);
+    }
+
+    public Record comment(WoofNode comment) {
+        return createNode(comment);
+    }
 }

@@ -6,4 +6,5 @@ public class NodeLabels {
     public static String CFG_NODE = "CFG_NODE";
     public static String CFG_TRACE = "CFG_TRACE";
     public static String SUMMARY_NODE = "SUMMARY_NODE";
+    public static String COMMENT_NODE = "COMMENT_NODE";
 }

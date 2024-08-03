@@ -11,4 +11,5 @@ public class NodeRelations {
     public static final String FLOWS_INTO = "FLOWS_INTO";
     public static final String REDEFINES = "REDEFINES";
     public static final String RELATIONSHIP_TYPE = "relationshipType";
+    public static final String HAS_COMMENT = "HAS_COMMENT";
 }
