@@ -1,20 +1,18 @@
 package com.mojo.woof;
 
-import org.neo4j.driver.AuthToken;
-import org.neo4j.driver.AuthTokens;
-import org.neo4j.driver.Driver;
-import org.neo4j.driver.GraphDatabase;
+import org.neo4j.driver.*;
 
 public class Neo4JDriverBuilder {
     private String uri;
     private String user;
     private String password;
+    private String database;
 
-    public Neo4JDriverBuilder credentials(String uri, String user, String password) {
+    public Neo4JDriverBuilder credentials(String uri, String user, String password, String database) {
         this.uri = uri;
         this.user = user;
         this.password = password;
-
+        this.database = database;
         return this;
     }
 
@@ -22,6 +20,7 @@ public class Neo4JDriverBuilder {
         uri = System.getenv("NEO4J_URI");
         user = System.getenv("NEO4J_USERNAME");
         password = System.getenv("NEO4J_PASSWORD");
+        database = System.getenv("NEO4J_DATABASE") != null ? System.getenv("NEO4J_DATABASE") : "neo4j";
 
         return this;
     }
@@ -32,5 +31,9 @@ public class Neo4JDriverBuilder {
 
     public Driver driver() {
         return GraphDatabase.driver(uri, auth());
+    }
+
+    public SessionConfig sessionConfig() {
+        return SessionConfig.forDatabase(database);
     }
 }

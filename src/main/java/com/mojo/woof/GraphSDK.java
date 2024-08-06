@@ -17,13 +17,15 @@ import static org.neo4j.driver.Values.parameters;
 
 public class GraphSDK {
     private final Driver driver;
+    private final SessionConfig sessionConfig;
 
     public GraphSDK(Neo4JDriverBuilder builder) {
         driver = builder.driver();
+        sessionConfig = builder.sessionConfig();
     }
 
     public Record rootNode() {
-        try (Session session = driver.session()) {
+        try (Session session = driver.session(sessionConfig)) {
             return session.executeRead(tx -> {
                 Query query = new Query("MATCH (n:CODE_CHUNK) " +
                         "            WHERE NOT (:CODE_CHUNK)-[:MADE_OF]->(n) " +
@@ -42,7 +44,7 @@ public class GraphSDK {
     }
 
     private List<Record> directChildren(Record node, String parentChildRelationship) {
-        try (Session session = driver.session()) {
+        try (Session session = driver.session(sessionConfig)) {
             return session.executeRead(tx -> {
                 Query query = new Query(String.format("MATCH (start {id: $rootID})-[:%s]->(n)", parentChildRelationship) +
                         "            RETURN DISTINCT n", parameters("rootID", id(node)));
@@ -53,7 +55,7 @@ public class GraphSDK {
     }
 
     public Record createSummary(String textContent, Record node) {
-        try (Session session = driver.session()) {
+        try (Session session = driver.session(sessionConfig)) {
             Record record = session.executeWrite(tx -> {
                 Query query = new Query("MATCH (p {id: $parentId}) " +
                         String.format("CREATE (n:%s {id: $childId, type: 'SUMMARY', text: $text}) ", SUMMARY_NODE) +
@@ -67,7 +69,7 @@ public class GraphSDK {
     }
 
     public Record createNode(WoofNode node) {
-        try (Session session = driver.session()) {
+        try (Session session = driver.session(sessionConfig)) {
             Record record = session.executeWrite(tx -> {
                 return node.run(tx).single();
             });
@@ -76,7 +78,7 @@ public class GraphSDK {
     }
 
     public Record node(Object id) {
-        try (Session session = driver.session()) {
+        try (Session session = driver.session(sessionConfig)) {
             Record record = session.executeWrite(tx -> {
                 return tx.run(new Query("MATCH (n {id: $id}) RETURN n", Values.parameters("id", id))).single();
             });
@@ -85,7 +87,7 @@ public class GraphSDK {
     }
 
     public Record connect(Record parent, Record child, String relationshipName, String edgeType) {
-        try (Session session = driver.session()) {
+        try (Session session = driver.session(sessionConfig)) {
             System.out.println("Connecting");
             Record record = session.executeWrite(tx -> {
                 Query query = new Query("MATCH (p {id: $parentId}) " +
@@ -100,7 +102,7 @@ public class GraphSDK {
     }
 
     List<Record> findNodes(List<String> labels, Map<String, Object> propertySpec) {
-        try (Session session = driver.session()) {
+        try (Session session = driver.session(sessionConfig)) {
             List<Record> records = session.executeWrite(tx -> {
                 String nodeIdentifier = labelSearchSpecs(labels);
                 List<String> searchSpecs = propertySpec.entrySet().stream().map(e -> e.getKey() + ": $" + e.getKey()).toList();
