@@ -22,6 +22,9 @@ public class Neo4JDriverBuilder {
         password = System.getenv("NEO4J_PASSWORD");
         database = System.getenv("NEO4J_DATABASE") != null ? System.getenv("NEO4J_DATABASE") : "neo4j";
 
+        System.out.println("Neo4J URI: " + uri);
+        System.out.println("Neo4J DATABASE: " + database);
+
         return this;
     }
 
