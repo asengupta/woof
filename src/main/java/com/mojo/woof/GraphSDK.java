@@ -176,4 +176,8 @@ public class GraphSDK {
     public Record comment(WoofNode comment) {
         return createNode(comment);
     }
+
+    public void dependsUpon(Record from, Record to) {
+        connect(from, to, NodeRelations.DEPENDS_UPON, EdgeType.DEPENDENCY);
+    }
 }

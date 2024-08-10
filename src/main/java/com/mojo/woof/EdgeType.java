@@ -7,4 +7,5 @@ public class EdgeType {
     public static String FLOW = "FLOW";
     public static String TOUCH = "TOUCH";
     public static String ANNOTATION = "ANNOTATION";
+    public static String DEPENDENCY = "DEPENDENCY";
 }
