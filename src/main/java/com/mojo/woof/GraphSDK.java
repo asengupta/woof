@@ -88,7 +88,7 @@ public class GraphSDK {
 
     public Record connect(Record parent, Record child, String relationshipName, String edgeType) {
         try (Session session = driver.session(builder.sessionConfig())) {
-            System.out.println("Connecting");
+            System.out.printf("Connecting %s to %s...%n", parent, child);
             Record record = session.executeWrite(tx -> {
                 Query query = new Query("MATCH (p {id: $parentId}) " +
                         " MATCH (c {id: $childId}) " +
