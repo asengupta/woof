@@ -138,11 +138,11 @@ public class GraphSDK {
     }
 
     public void containsCodeNode(Record parent, Record child) {
-        connect(parent, child, CONTAINS, EdgeType.SYNTAX);
+        connect(parent, child, CONTAINS_CODE, EdgeType.SYNTAX);
     }
 
     public void containsDataNode(Record parent, Record child) {
-        connect(parent, child, CONTAINS, EdgeType.DATA);
+        connect(parent, child, CONTAINS_DATA, EdgeType.DATA);
     }
 
     public void jumpsTo(Record source, Record destination) {
