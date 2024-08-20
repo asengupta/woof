@@ -11,4 +11,5 @@ public class NodeProperties {
     public static String LABEL = "label";
     public static String LEVEL = "level";
     public static String NAMESPACE = "namespace";
+    public static String SECTION_SOURCE = "source";
 }
