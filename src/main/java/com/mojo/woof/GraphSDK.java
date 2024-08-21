@@ -15,7 +15,7 @@ import static com.mojo.woof.NodeProperties.TEXT;
 import static com.mojo.woof.NodeRelations.*;
 import static org.neo4j.driver.Values.parameters;
 
-public class GraphSDK {
+public class GraphSDK implements AutoCloseable {
     private final Driver driver;
     private final Neo4JDriverBuilder builder;
 
@@ -179,5 +179,10 @@ public class GraphSDK {
 
     public void dependsUpon(Record from, Record to) {
         connect(from, to, NodeRelations.DEPENDS_UPON, EdgeType.DEPENDENCY);
+    }
+
+    @Override
+    public void close() throws Exception {
+        driver.close();
     }
 }
