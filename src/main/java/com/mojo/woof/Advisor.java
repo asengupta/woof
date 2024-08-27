@@ -26,8 +26,8 @@ public class Advisor {
     }
 
     public List<String> advise(String prompt) {
-        List<ChatMessage> prompt2 = new ArrayList<>();
-        prompt2.add(new ChatMessage(ChatRole.USER, prompt));
+        List<ChatRequestMessage> prompt2 = new ArrayList<>();
+        prompt2.add(new ChatRequestUserMessage(prompt));
 
         ChatCompletions completions = client.getChatCompletions(deploymentOrModelId, new ChatCompletionsOptions(prompt2));
 
