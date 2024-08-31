@@ -137,6 +137,13 @@ public class GraphSDK implements AutoCloseable {
         return newOrExisting(spec.labels(), spec.properties(), node);
     }
 
+    public Record existing(NodeSpec spec) {
+        List<Record> nodes = findNodes(spec.labels(), spec.properties());
+        if (nodes.isEmpty()) throw new NodeNotFoundException(spec);
+        if (nodes.size() > 1) throw new TooManyNodesFoundException(spec);
+        return nodes.getFirst();
+    }
+
     public void containsCodeNode(Record parent, Record child) {
         connect(parent, child, CONTAINS_CODE, EdgeType.SYNTAX);
     }
