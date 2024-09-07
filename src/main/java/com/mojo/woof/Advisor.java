@@ -33,9 +33,9 @@ public class Advisor {
 
         ChatCompletions completions = client.getChatCompletions(deploymentOrModelId, new ChatCompletionsOptions(prompt2));
 
-        LOGGER.info(String.format("Model ID=%s is created at %s.%n", completions.getId(), completions.getCreatedAt()));
+        LOGGER.info(String.format("Model ID=%s is created at %s.", completions.getId(), completions.getCreatedAt()));
         for (ChatChoice choice : completions.getChoices()) {
-            LOGGER.info(String.format("Index: %d, Text: %s.%n", choice.getIndex(), choice.getMessage().getContent()));
+            LOGGER.info(String.format("Index: %d, Text: %s.", choice.getIndex(), choice.getMessage().getContent()));
         }
 
         List<String> responses = completions.getChoices().stream().map(c -> c.getMessage().getContent()).toList();
