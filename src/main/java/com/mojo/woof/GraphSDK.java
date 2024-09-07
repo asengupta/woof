@@ -7,6 +7,7 @@ import org.neo4j.driver.Record;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 import static com.mojo.woof.EdgeType.EDGE_TYPE;
 import static com.mojo.woof.NodeAccess.id;
@@ -16,6 +17,7 @@ import static com.mojo.woof.NodeRelations.*;
 import static org.neo4j.driver.Values.parameters;
 
 public class GraphSDK implements AutoCloseable {
+    private static final java.util.logging.Logger logger = Logger.getLogger(GraphSDK.class.getName());
     private final Driver driver;
     private final Neo4JDriverBuilder builder;
 
@@ -88,7 +90,7 @@ public class GraphSDK implements AutoCloseable {
 
     public Record connect(Record parent, Record child, String relationshipName, String edgeType) {
         try (Session session = driver.session(builder.sessionConfig())) {
-            System.out.printf("Connecting %s to %s...%n", parent, child);
+            logger.finest(String.format("Connecting %s to %s...%n", parent, child));
             Record record = session.executeWrite(tx -> {
                 Query query = new Query("MATCH (p {id: $parentId}) " +
                         " MATCH (c {id: $childId}) " +
