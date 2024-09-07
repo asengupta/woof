@@ -7,8 +7,10 @@ import com.azure.core.credential.AzureKeyCredential;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class Advisor {
+    private static final Logger LOGGER = Logger.getLogger(Advisor.class.getName());
     public static final String AZURE_OPENAI_ENDPOINT = "AZURE_OPENAI_ENDPOINT";
     public static final String AZURE_OPENAI_API_KEY = "AZURE_OPENAI_API_KEY";
     private final String azureOpenaiApiKey;
@@ -31,17 +33,17 @@ public class Advisor {
 
         ChatCompletions completions = client.getChatCompletions(deploymentOrModelId, new ChatCompletionsOptions(prompt2));
 
-        System.out.printf("Model ID=%s is created at %s.%n", completions.getId(), completions.getCreatedAt());
+        LOGGER.info(String.format("Model ID=%s is created at %s.%n", completions.getId(), completions.getCreatedAt()));
         for (ChatChoice choice : completions.getChoices()) {
-            System.out.printf("Index: %d, Text: %s.%n", choice.getIndex(), choice.getMessage().getContent());
+            LOGGER.info(String.format("Index: %d, Text: %s.%n", choice.getIndex(), choice.getMessage().getContent()));
         }
 
         List<String> responses = completions.getChoices().stream().map(c -> c.getMessage().getContent()).toList();
 
         CompletionsUsage usage = completions.getUsage();
-        System.out.printf("Usage: number of prompt token is %d, "
-                        + "number of completion token is %d, and number of total tokens in request and response is %d.%n",
-                usage.getPromptTokens(), usage.getCompletionTokens(), usage.getTotalTokens());
+        LOGGER.info(String.format("Usage: number of prompt token is %d, "
+                        + "number of completion token is %d, and number of total tokens in request and response is %d.",
+                usage.getPromptTokens(), usage.getCompletionTokens(), usage.getTotalTokens()));
         return responses;
     }
 }

@@ -2,7 +2,10 @@ package com.mojo.woof;
 
 import org.neo4j.driver.*;
 
+import java.util.logging.Logger;
+
 public class Neo4JDriverBuilder {
+    private static final java.util.logging.Logger LOGGER = Logger.getLogger(Neo4JDriverBuilder.class.getName());
     private String uri;
     private String user;
     private String password;
@@ -22,8 +25,8 @@ public class Neo4JDriverBuilder {
         password = System.getenv("NEO4J_PASSWORD");
         database = System.getenv("NEO4J_DATABASE") != null ? System.getenv("NEO4J_DATABASE") : "neo4j";
 
-        System.out.println("Neo4J URI: " + uri);
-        System.out.println("Neo4J DATABASE: " + database);
+        LOGGER.info("Neo4J URI: " + uri);
+        LOGGER.info("Neo4J DATABASE: " + database);
 
         return this;
     }
