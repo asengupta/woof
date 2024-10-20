@@ -1,6 +1,5 @@
 package com.mojo.woof;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.google.common.collect.ImmutableList;
 import org.junit.jupiter.api.*;
