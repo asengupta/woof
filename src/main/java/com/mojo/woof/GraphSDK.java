@@ -45,7 +45,7 @@ public class GraphSDK implements AutoCloseable {
         return nodeAction.apply(node, childResults);
     }
 
-    private List<Record> directChildren(Record node, String parentChildRelationship) {
+    public List<Record> directChildren(Record node, String parentChildRelationship) {
         try (Session session = driver.session(builder.sessionConfig())) {
             return session.executeRead(tx -> {
                 Query query = new Query(String.format("MATCH (start {id: $rootID})-[:%s]->(n)", parentChildRelationship) +
