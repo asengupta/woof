@@ -56,6 +56,17 @@ public class GraphSDK implements AutoCloseable {
         }
     }
 
+    public List<Record> directChildrenAnyDirection(Record node, String parentChildRelationship) {
+        try (Session session = driver.session(builder.sessionConfig())) {
+            return session.executeRead(tx -> {
+                Query query = new Query(String.format("MATCH (start {id: $rootID})-[:%s]-(n)", parentChildRelationship) +
+                        "            RETURN DISTINCT n", parameters("rootID", id(node)));
+                Result result = tx.run(query);
+                return result.list();
+            });
+        }
+    }
+
     public Record createSummary(String textContent, Record node) {
         try (Session session = driver.session(builder.sessionConfig())) {
             Record record = session.executeWrite(tx -> {
