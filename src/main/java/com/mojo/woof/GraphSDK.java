@@ -32,9 +32,10 @@ public class GraphSDK implements AutoCloseable {
         try (Session session = driver.session(builder.sessionConfig())) {
             session.executeWrite(tx -> {
                 String nodeWriteQuery = """
-                            UNWIND $nodes AS node
-                            CREATE (n:GenericNode)
-                            SET n = node
+                            UNWIND $nodes AS n
+                            WITH n.props AS props, n.labels AS labels
+                            CALL apoc.create.node(labels, props) YIELD node
+                            RETURN node
                         """;
                 Value nodeValues = parameters("nodes", toNodeValues(nodes));
                 Result nodeWriteResult = tx.run(nodeWriteQuery, nodeValues);
@@ -60,7 +61,14 @@ public class GraphSDK implements AutoCloseable {
 
     private List<Map<String, Object>> toNodeValues(List<WoofNode> nodes) {
         return nodes.stream()
-                .map(WoofNode::getProperties).toList();
+                .map(node ->
+                        Map.of(
+                                "labels", List.of(node.getProperties().get("type"), "GenericNode"),
+                                "props", node.getProperties()
+                        )
+                ).toList();
+//        return nodes.stream()
+//                .map(WoofNode::getProperties).toList();
     }
 
     public Record rootNode() {
