@@ -1,6 +1,8 @@
 package com.mojo.woof;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import org.apache.commons.lang3.tuple.Pair;
 import org.neo4j.driver.*;
 import org.neo4j.driver.Record;
 
@@ -24,6 +26,41 @@ public class GraphSDK implements AutoCloseable {
     public GraphSDK(Neo4JDriverBuilder builder) {
         driver = builder.driver();
         this.builder = builder;
+    }
+
+    public void addGraph(List<WoofNode> nodes, List<Pair<WoofNode, WoofNode>> edges) {
+        try (Session session = driver.session(builder.sessionConfig())) {
+            session.executeWrite(tx -> {
+                String nodeWriteQuery = """
+                            UNWIND $nodes AS node
+                            CREATE (n:GenericNode)
+                            SET n = node
+                        """;
+                Value nodeValues = parameters("nodes", toNodeValues(nodes));
+                Result nodeWriteResult = tx.run(nodeWriteQuery, nodeValues);
+                Value edgeValues = parameters("rels", toEdgeValues(edges));
+                Result edgeWriteResult = tx.run("""
+                                    UNWIND $rels AS rel
+                                    MATCH (a:GenericNode {uuid: rel.from})
+                                    MATCH (b:GenericNode {uuid: rel.to})
+                                    CREATE (a)-[:CONTAINS]->(b)
+                                """,
+                        edgeValues);
+                return nodeWriteResult.list();
+            });
+        }
+    }
+
+    private List<Map<String, Object>> toEdgeValues(List<Pair<WoofNode, WoofNode>> edges) {
+        return edges.stream().map(edge -> Map.of(
+                        "from", edge.getLeft().getProperties().get("uuid"),
+                        "to", edge.getRight().getProperties().get("uuid")))
+                .toList();
+    }
+
+    private List<Map<String, Object>> toNodeValues(List<WoofNode> nodes) {
+        return nodes.stream()
+                .map(WoofNode::getProperties).toList();
     }
 
     public Record rootNode() {

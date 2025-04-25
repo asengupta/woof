@@ -1,5 +1,6 @@
 package com.mojo.woof;
 
+import lombok.Getter;
 import org.neo4j.driver.*;
 
 import java.util.List;
@@ -8,7 +9,7 @@ import java.util.UUID;
 
 public class WoofNode {
 
-    private final Map<String, Object> properties;
+    @Getter private final Map<String, Object> properties;
     private final List<String> labels;
 
     public WoofNode(Map<String, Object> properties, List<String> labels) {
