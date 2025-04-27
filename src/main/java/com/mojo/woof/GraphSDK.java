@@ -119,7 +119,7 @@ public class GraphSDK implements AutoCloseable {
                         String.format("CREATE (n:%s {id: $childId, type: 'SUMMARY', text: $text}) ", SUMMARY_NODE) +
                         String.format("CREATE (p)-[:%s]->(n) ", SUMMARISED_BY) +
                         "RETURN n",
-                        parameters(TEXT, textContent, "parentId", id(node), "childId", UUID.randomUUID().toString()));
+                        parameters(TEXT, textContent, "parentId", id(node), "childId", new UUIDProvider().uuid()));
                 return tx.run(query).single();
             });
             return record;
