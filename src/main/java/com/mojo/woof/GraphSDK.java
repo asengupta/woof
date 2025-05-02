@@ -41,17 +41,6 @@ public class GraphSDK implements AutoCloseable {
                         + " MATCH (a:GenericNode {uuid: rel.from}), (b:GenericNode {uuid: rel.to}) "
                         + " CALL apoc.create.relationship(a, rel.relType, {}, b) YIELD rel AS createdRel "
                         + " RETURN createdRel ";
-//                Result edgeWriteResult = tx.run("""
-//                                UNWIND $rels AS rel
-//                                OPTIONAL MATCH (a:GenericNode {uuid: rel.from})
-//                                OPTIONAL MATCH (b:GenericNode {uuid: rel.to})
-//                                CALL apoc.util.validate(
-//                                  a IS NULL OR b IS NULL,
-//                                  'Missing node for rel.from: %s or rel.to: %s',
-//                                  [rel.from, rel.to]
-//                                )""" +
-//                                String.format(" CREATE (a)-[:CONTAINS]->(b) RETURN rel", ),
-//                        edgeValues);
                 Result edgeWrite = tx.run(edgeWriteQ, edgeValues);
                 return nodeWriteResult.list();
             });
