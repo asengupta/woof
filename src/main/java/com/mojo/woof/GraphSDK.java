@@ -39,12 +39,19 @@ public class GraphSDK implements AutoCloseable {
                         """;
                 Value nodeValues = parameters("nodes", toNodeValues(nodes));
                 Result nodeWriteResult = tx.run(nodeWriteQuery, nodeValues);
-                Value edgeValues = parameters("rels", toEdgeValues(edges));
+                List<Map<String, Object>> edgeValues1 = toEdgeValues(edges);
+                Value edgeValues = parameters("rels", edgeValues1);
                 Result edgeWriteResult = tx.run("""
                                     UNWIND $rels AS rel
-                                    MATCH (a:GenericNode {uuid: rel.from})
-                                    MATCH (b:GenericNode {uuid: rel.to})
+                                    OPTIONAL MATCH (a:GenericNode {uuid: rel.from})
+                                    OPTIONAL MATCH (b:GenericNode {uuid: rel.to})
+                                    CALL apoc.util.validate(
+                                      a IS NULL OR b IS NULL,
+                                      'Missing node for rel.from: %s or rel.to: %s',
+                                      [rel.from, rel.to]
+                                    )
                                     CREATE (a)-[:CONTAINS]->(b)
+                                    RETURN rel
                                 """,
                         edgeValues);
                 return nodeWriteResult.list();
