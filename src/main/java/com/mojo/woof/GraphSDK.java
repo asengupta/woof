@@ -1,14 +1,11 @@
 package com.mojo.woof;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import org.apache.commons.lang3.tuple.Pair;
 import org.neo4j.driver.*;
 import org.neo4j.driver.Record;
 
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.logging.Logger;
 
 import static com.mojo.woof.EdgeType.EDGE_TYPE;
@@ -28,7 +25,7 @@ public class GraphSDK implements AutoCloseable {
         this.builder = builder;
     }
 
-    public void addGraph(List<WoofNode> nodes, List<Pair<WoofNode, WoofNode>> edges) {
+    public void addGraph(List<WoofNode> nodes, List<WoofEdge> edges) {
         try (Session session = driver.session(builder.sessionConfig())) {
             session.executeWrite(tx -> {
                 String nodeWriteQuery = """
@@ -39,30 +36,33 @@ public class GraphSDK implements AutoCloseable {
                         """;
                 Value nodeValues = parameters("nodes", toNodeValues(nodes));
                 Result nodeWriteResult = tx.run(nodeWriteQuery, nodeValues);
-                List<Map<String, Object>> edgeValues1 = toEdgeValues(edges);
-                Value edgeValues = parameters("rels", edgeValues1);
-                Result edgeWriteResult = tx.run("""
-                                    UNWIND $rels AS rel
-                                    OPTIONAL MATCH (a:GenericNode {uuid: rel.from})
-                                    OPTIONAL MATCH (b:GenericNode {uuid: rel.to})
-                                    CALL apoc.util.validate(
-                                      a IS NULL OR b IS NULL,
-                                      'Missing node for rel.from: %s or rel.to: %s',
-                                      [rel.from, rel.to]
-                                    )
-                                    CREATE (a)-[:CONTAINS]->(b)
-                                    RETURN rel
-                                """,
-                        edgeValues);
+                Value edgeValues = parameters("rels", toEdgeValues(edges));
+                String edgeWriteQ = "UNWIND $rels AS rel "
+                        + " MATCH (a:GenericNode {uuid: rel.from}), (b:GenericNode {uuid: rel.to}) "
+                        + " CALL apoc.create.relationship(a, rel.relType, {}, b) YIELD rel AS createdRel "
+                        + " RETURN createdRel ";
+//                Result edgeWriteResult = tx.run("""
+//                                UNWIND $rels AS rel
+//                                OPTIONAL MATCH (a:GenericNode {uuid: rel.from})
+//                                OPTIONAL MATCH (b:GenericNode {uuid: rel.to})
+//                                CALL apoc.util.validate(
+//                                  a IS NULL OR b IS NULL,
+//                                  'Missing node for rel.from: %s or rel.to: %s',
+//                                  [rel.from, rel.to]
+//                                )""" +
+//                                String.format(" CREATE (a)-[:CONTAINS]->(b) RETURN rel", ),
+//                        edgeValues);
+                Result edgeWrite = tx.run(edgeWriteQ, edgeValues);
                 return nodeWriteResult.list();
             });
         }
     }
 
-    private List<Map<String, Object>> toEdgeValues(List<Pair<WoofNode, WoofNode>> edges) {
+    private List<Map<String, Object>> toEdgeValues(List<WoofEdge> edges) {
         return edges.stream().map(edge -> Map.of(
-                        "from", edge.getLeft().getProperties().get("uuid"),
-                        "to", edge.getRight().getProperties().get("uuid")))
+                        "from", edge.from().getProperties().get("uuid"),
+                        "to", edge.to().getProperties().get("uuid"),
+                        "relType", edge.labels().getFirst()))
                 .toList();
     }
 
