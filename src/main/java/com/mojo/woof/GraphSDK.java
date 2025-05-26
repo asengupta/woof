@@ -63,8 +63,6 @@ public class GraphSDK implements AutoCloseable {
                                 "props", node.getProperties()
                         )
                 ).toList();
-//        return nodes.stream()
-//                .map(WoofNode::getProperties).toList();
     }
 
     public Record rootNode() {
