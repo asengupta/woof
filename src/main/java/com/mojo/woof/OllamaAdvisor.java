@@ -20,6 +20,10 @@ public class OllamaAdvisor implements Advisor {
         this.client = client;
     }
 
+    public OllamaAdvisor() {
+        this(HttpClient.newHttpClient());
+    }
+
     @Override
     public List<String> advise(String prompt) {
         String payload = String.format("""
