@@ -14,7 +14,7 @@ public class SDKTest
     @Disabled
     public void canTraverseGraph() {
         GraphSDK sdk = new GraphSDK(new Neo4JDriverBuilder().fromEnv());
-        Advisor advisor = new Advisor(OpenAICredentials.fromEnv());
+        Advisor advisor = new AzureOpenAIAdvisor(OpenAICredentials.fromEnv());
         Record root = sdk.findNodes(ImmutableList.of("AST_NODE"), Map.of("type", "PROCEDURE_DIVISION_BODY")).getFirst();
         ActionResult result = sdk.traverse(root, NodeAction.JUST_PRINT, "CONTAINS_CODE");
     }
