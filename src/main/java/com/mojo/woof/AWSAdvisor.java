@@ -1,6 +1,6 @@
 package com.mojo.woof;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.common.collect.ImmutableList;
 import software.amazon.awssdk.auth.credentials.AwsSessionCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.core.SdkBytes;
@@ -14,8 +14,9 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
-public class AWSAdvisor {
+public class AWSAdvisor implements Advisor {
 //    private static final Logger LOGGER = Logger.getLogger(AWSAdvisor.class.getName());
     private final String awsAccessKey;
     private final String awsSecretAccessKey;
@@ -31,7 +32,7 @@ public class AWSAdvisor {
         this.modelId = "us.anthropic.claude-3-7-sonnet-20250219-v1:0";
     }
 
-    public String advise(String prompt) {// Build Claude-style JSON request
+    public List<String> advise(String prompt) {// Build Claude-style JSON request
 
         // Build Claude-style JSON request
         ObjectMapper mapper = new ObjectMapper();
@@ -71,14 +72,14 @@ public class AWSAdvisor {
             // Parse modelResponse
             String reply = modelResponse.body().asUtf8String();
             System.out.println(reply);
-             return mapper.readTree(reply)
+             return ImmutableList.of(mapper.readTree(reply)
                     .path("content")
                     .get(0)
                     .path("text")
-                    .asText();
+                    .asText());
         } catch (Exception e) {
             System.out.println(e.getMessage());
-            return null;
+            throw new RuntimeException(e);
         }
 
     }
@@ -86,7 +87,7 @@ public class AWSAdvisor {
     public static void main(String[] args){
 
         AWSAdvisor aws_advisor = new AWSAdvisor(AWSCredentials.fromEnv());
-        String reply = aws_advisor.advise("Hello, This is a test prompt!");
+        List<String> reply = aws_advisor.advise("Hello, This is a test prompt!");
         System.out.println("Claude replied:\n" + reply);
 
     }
