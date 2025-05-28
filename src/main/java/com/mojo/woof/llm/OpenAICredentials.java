@@ -1,4 +1,4 @@
-package com.mojo.woof;
+package com.mojo.woof.llm;
 
 public record OpenAICredentials(String key, String endpoint) {
     public static OpenAICredentials fromEnv() {

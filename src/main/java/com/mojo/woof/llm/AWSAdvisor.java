@@ -1,4 +1,4 @@
-package com.mojo.woof;
+package com.mojo.woof.llm;
 
 import com.google.common.collect.ImmutableList;
 import software.amazon.awssdk.auth.credentials.AwsSessionCredentials;
@@ -17,7 +17,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class AWSAdvisor implements Advisor {
-//    private static final Logger LOGGER = Logger.getLogger(AWSAdvisor.class.getName());
+    public static final String ANTHROPIC_VERSION = "anthropic_version";
+    public static final String MAX_TOKENS = "max_tokens";
+    public static final String BEDROCK_2023_05_31 = "bedrock-2023-05-31";
+    //    private static final Logger LOGGER = Logger.getLogger(AWSAdvisor.class.getName());
     private final String awsAccessKey;
     private final String awsSecretAccessKey;
     private final String awsSessionToken;
@@ -28,8 +31,8 @@ public class AWSAdvisor implements Advisor {
         this.awsAccessKey = credentials.accessKey();
         this.awsSecretAccessKey = credentials.secretKey();
         this.awsSessionToken = credentials.sessionToken();
-        this.region = Region.US_EAST_1;
-        this.modelId = "us.anthropic.claude-3-7-sonnet-20250219-v1:0";
+        this.region = Region.of(credentials.region());
+        this.modelId = credentials.modelID();
     }
 
     public List<String> advise(String prompt) {// Build Claude-style JSON request
@@ -44,8 +47,8 @@ public class AWSAdvisor implements Advisor {
                 .put("content", prompt);
 
         body.set("messages", messages);
-        body.put("anthropic_version", "bedrock-2023-05-31");
-        body.put("max_tokens", 10000);
+        body.put(ANTHROPIC_VERSION, BEDROCK_2023_05_31);
+        body.put(MAX_TOKENS, 10000);
         System.out.println(body);
         String response = "";
         try {

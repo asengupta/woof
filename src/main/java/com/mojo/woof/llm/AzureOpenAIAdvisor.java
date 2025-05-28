@@ -1,4 +1,4 @@
-package com.mojo.woof;
+package com.mojo.woof.llm;
 
 import com.azure.ai.openai.OpenAIClient;
 import com.azure.ai.openai.OpenAIClientBuilder;

@@ -1,3 +1,5 @@
 fileignoreconfig:
 - filename: src/main/java/com/mojo/woof/Neo4JDriverBuilder.java
   checksum: 1a1c7ccbf0e80e1d9d59fc854d0fb01400f8ddb3f120a9a5474e160e02b23493
+- filename: src/main/java/com/mojo/woof/llm/AWSCredentials.java
+  checksum: 26231d1898b5b569f33b71c3e7eccddec386fd37ab5e70bdbe67b9a6b3d50064

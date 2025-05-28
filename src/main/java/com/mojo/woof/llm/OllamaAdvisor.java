@@ -1,4 +1,4 @@
-package com.mojo.woof;
+package com.mojo.woof.llm;
 
 import com.google.common.collect.ImmutableList;
 import com.google.gson.Gson;

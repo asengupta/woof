@@ -1,4 +1,4 @@
-package com.mojo.woof;
+package com.mojo.woof.llm;
 
 import java.util.List;
 

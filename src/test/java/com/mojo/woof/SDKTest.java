@@ -2,6 +2,9 @@ package com.mojo.woof;
 
 
 import com.google.common.collect.ImmutableList;
+import com.mojo.woof.llm.Advisor;
+import com.mojo.woof.llm.AzureOpenAIAdvisor;
+import com.mojo.woof.llm.OpenAICredentials;
 import org.junit.jupiter.api.*;
 import org.neo4j.driver.Record;
 
