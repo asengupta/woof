@@ -1,7 +1,7 @@
 package com.mojo.woof.llm;
 
 import com.google.common.collect.ImmutableList;
-import software.amazon.awssdk.auth.credentials.AwsSessionCredentials;
+import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.core.SdkBytes;
 import software.amazon.awssdk.regions.Region;
@@ -23,14 +23,12 @@ public class AWSAdvisor implements Advisor {
     //    private static final Logger LOGGER = Logger.getLogger(AWSAdvisor.class.getName());
     private final String awsAccessKey;
     private final String awsSecretAccessKey;
-    private final String awsSessionToken;
     private final Region region;
     private final String modelId;
 
     public AWSAdvisor(AWSCredentials credentials) {
         this.awsAccessKey = credentials.accessKey();
         this.awsSecretAccessKey = credentials.secretKey();
-        this.awsSessionToken = credentials.sessionToken();
         this.region = Region.of(credentials.region());
         this.modelId = credentials.modelID();
     }
@@ -54,10 +52,12 @@ public class AWSAdvisor implements Advisor {
         try {
 
             BedrockRuntimeClient bedrockClient = BedrockRuntimeClient.builder()
-                    .region(region)
-                    .credentialsProvider(StaticCredentialsProvider.create(
-                            AwsSessionCredentials.create(this.awsAccessKey, this.awsSecretAccessKey, this.awsSessionToken)
-                    ))
+                    .region(this.region)
+                    .credentialsProvider(
+                            StaticCredentialsProvider.create(
+                                    AwsBasicCredentials.create(this.awsAccessKey, this.awsSecretAccessKey)
+                            )
+                    )
                     .build();
 
             InvokeModelRequest request = InvokeModelRequest.builder()
