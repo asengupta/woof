@@ -10,18 +10,18 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.List;
-import java.util.logging.Logger;
 
 public class OllamaAdvisor implements Advisor {
-    private static final Logger LOGGER = Logger.getLogger(OllamaAdvisor.class.getName());
     private final HttpClient client;
+    private final String ollamaEndpoint;
 
-    public OllamaAdvisor(HttpClient client) {
+    public OllamaAdvisor(HttpClient client, OllamaCredentials credentials) {
         this.client = client;
+        ollamaEndpoint = credentials.ollamaEndpoint();
     }
 
-    public OllamaAdvisor() {
-        this(HttpClient.newHttpClient());
+    public OllamaAdvisor(OllamaCredentials credentials) {
+        this(HttpClient.newHttpClient(), credentials);
     }
 
     @Override
@@ -35,14 +35,13 @@ public class OllamaAdvisor implements Advisor {
                 """, prompt);
 
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create("http://localhost:11434/api/generate"))
+                .uri(URI.create(ollamaEndpoint))
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(payload))
                 .build();
 
-        HttpResponse<String> response = null;
         try {
-            response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             JsonObject jsonObject = new Gson().fromJson(response.body(), JsonObject.class);
             return ImmutableList.of(jsonObject.get("response").getAsString());
         } catch (IOException | InterruptedException e) {

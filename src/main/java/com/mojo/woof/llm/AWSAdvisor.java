@@ -53,7 +53,6 @@ public class AWSAdvisor implements Advisor {
         String response = "";
         try {
 
-            // Build Bedrock client with static credentials
             BedrockRuntimeClient bedrockClient = BedrockRuntimeClient.builder()
                     .region(region)
                     .credentialsProvider(StaticCredentialsProvider.create(
@@ -61,7 +60,6 @@ public class AWSAdvisor implements Advisor {
                     ))
                     .build();
 
-            // Create the invoke request
             InvokeModelRequest request = InvokeModelRequest.builder()
                     .modelId(modelId)
                     .contentType("application/json")
@@ -69,10 +67,8 @@ public class AWSAdvisor implements Advisor {
                     .body(SdkBytes.fromString(body.toString(), StandardCharsets.UTF_8))
                     .build();
 
-            // Invoke Claude model
             InvokeModelResponse modelResponse = bedrockClient.invokeModel(request);
 
-            // Parse modelResponse
             String reply = modelResponse.body().asUtf8String();
             System.out.println(reply);
              return ImmutableList.of(mapper.readTree(reply)
