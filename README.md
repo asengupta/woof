@@ -63,13 +63,16 @@ try (GraphSDK sdk = new GraphSDK(builder)) {
 ### LLM Integration
 
 ```java
+import com.mojo.woof.llm.AWSCredentials;
+import com.mojo.woof.llm.OllamaCredentials;
+
 // Using Ollama
-OllamaCredentials ollamaCredentials = new OllamaCredentials("http://localhost:11434/api/generate");
+OllamaCredentials ollamaCredentials = OllamaCredentials.fromEnv();
 Advisor ollamaAdvisor = new OllamaAdvisor(ollamaCredentials);
 List<String> responses = ollamaAdvisor.advise("Explain what a graph database is");
 
 // Using AWS Bedrock
-AWSCredentials awsCredentials = new AWSCredentials("your-region");
+AWSCredentials awsCredentials = AWSCredentials.fromEnv();
 Advisor awsAdvisor = new AWSAdvisor(awsCredentials);
 List<String> responses = awsAdvisor.advise("Summarize the key features of Neo4J");
 ```
