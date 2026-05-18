@@ -1,32 +1,36 @@
 package com.mojo.woof;
 
-import lombok.Getter;
-import org.neo4j.driver.*;
-
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import lombok.Getter;
+import org.neo4j.driver.*;
 
 public class WoofNode {
 
-    @Getter private final Map<String, Object> properties;
-    private final List<String> labels;
+  @Getter private final Map<String, Object> properties;
+  private final List<String> labels;
 
-    public WoofNode(Map<String, Object> properties, List<String> labels) {
-        this.properties = properties;
-        this.labels = labels;
-    }
+  public WoofNode(Map<String, Object> properties, List<String> labels) {
+    this.properties = properties;
+    this.labels = labels;
+  }
 
-    public WoofNode(NodeSpec spec) {
-        this.properties = spec.properties();
-        this.labels = spec.labels();
-    }
+  public WoofNode(NodeSpec spec) {
+    this.properties = spec.properties();
+    this.labels = spec.labels();
+  }
 
-    public Result run(TransactionContext tx) {
-        String labelSpec = "n:" + String.join(":", labels);
-        String idSpec = "id: \"" + UUID.randomUUID() + "\"";
-        String propertySpec = "{" + idSpec + ", " + String.join(", ", properties.keySet().stream().map(k -> k + ": $" + k).toList()) + "}";
-        String queryString = String.format("CREATE (%s %s) RETURN n", labelSpec, propertySpec);
-        return tx.run(queryString, properties);
-    }
+  public Result run(TransactionContext tx) {
+    String labelSpec = "n:" + String.join(":", labels);
+    String idSpec = "id: \"" + UUID.randomUUID() + "\"";
+    String propertySpec =
+        "{"
+            + idSpec
+            + ", "
+            + String.join(", ", properties.keySet().stream().map(k -> k + ": $" + k).toList())
+            + "}";
+    String queryString = String.format("CREATE (%s %s) RETURN n", labelSpec, propertySpec);
+    return tx.run(queryString, properties);
+  }
 }

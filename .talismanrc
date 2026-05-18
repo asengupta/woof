@@ -3,3 +3,19 @@ fileignoreconfig:
   checksum: 1a1c7ccbf0e80e1d9d59fc854d0fb01400f8ddb3f120a9a5474e160e02b23493
 - filename: src/main/java/com/mojo/woof/llm/AWSCredentials.java
   checksum: 26231d1898b5b569f33b71c3e7eccddec386fd37ab5e70bdbe67b9a6b3d50064
+fileignoreconfig:
+- filename: src/main/java/com/mojo/woof/llm/OpenAICredentials.java
+  checksum: 87f3b54720dde824a569115fc1981a9827f35dc378dd1b0eeafc79f4cb7d35f3
+- filename: src/main/java/com/mojo/woof/WoofNode.java
+  checksum: b28101093f2e95df128371dec1567138b890c0700e7061dfdff56b148f017ca8
+- filename: src/main/java/com/mojo/woof/llm/AzureOpenAIAdvisor.java
+  checksum: f6e323899ba0b3ebc444985aabab7d4eea37871478d37216ea19fcec29174506
+- filename: src/main/java/com/mojo/woof/Neo4JDriverBuilder.java
+  checksum: 0d6d0666acbedfe484ff3fc881c7a59c28bf5475ddf39bb961a1ae4f588849a1
+- filename: src/main/java/com/mojo/woof/llm/AWSCredentials.java
+  checksum: f307b938e82c846a0cdc6ede57d8dbc8d5b544d7fe6b0200998ef54a3b520d19
+- filename: src/main/java/com/mojo/woof/llm/AWSAdvisor.java
+  checksum: d54d0fdc2708f70717b384eaf55bafc715e1bb1591fc99dbcfbfdbe7414763e5
+- filename: src/main/java/com/mojo/woof/GraphSDK.java
+  checksum: 616f41054236838bd942ffefd98d5e245a80be66372054beb7fc807cae015ad5
+version: "1.0"
